@@ -1,0 +1,12 @@
+.LOGTABLE your_log_table;
+.LOGON hostname/username,password;
+  DATABASE DBNAME;
+  .BEGIN EXPORT SESSIONS 2;
+    .EXPORT OUTFILE filename.csv;
+    MODE RECORD FORMAT TEXT;
+    SELECT * FROM TABLE_NAME;
+  .END EXPORT;
+.LOGOFF;
+
+#run as
+#fastexp fastExportSample 
