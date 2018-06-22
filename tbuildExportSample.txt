@@ -1,0 +1,8 @@
+#run as 
+#tbuild -f tbuildExportSample.txt -v tbuildConfigFile.txt -j tbuildExportSample 
+
+DEFINE JOB tbuildExportSample
+(
+  APPLY TO OPERATOR ($FILE_WRITER)
+  SELECT * FROM OPERATOR($EXPORT);
+);
