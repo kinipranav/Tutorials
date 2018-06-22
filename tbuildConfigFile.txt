@@ -1,0 +1,16 @@
+#sample Tbuild config file
+ SourceTdpId = 'Teradata_DB_HOST_NAME'
+,SourceUserName = 'UserName'
+,SourceUserPassword = 'Password'
+,DDLPrivateLogName = 'ddlprivate.log'
+,ExportPrivateLogName = 'exportprivate.log'
+,TargetErrorList = ['3807']
+,TargetFileName = 'your_file_name.csv' #ths is where stuff lands up
+,TargetFormat = 'delimited'
+,TargetTextDelimiter = ','
+,TargetOpenMode = 'write'
+,SelectStmt = 'select * from table_name QUALIFY ROW_NUMBER() OVER(ORDER BY column) BETWEEN 1 and 5000000;'
+
+#column above should be some column in table with unique values
+#above sql can be used to split massive table into chunks and fetch data in batches
+#1 to 5000000; then 5000001 to 10000000; then 10000001 to 15000000 & so on.
