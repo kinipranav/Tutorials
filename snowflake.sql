@@ -53,4 +53,29 @@ update table2 set col2 = counts from (select count(*) as counts, FILE_NAME, TABL
 as tab1 where tab1.ID = '123' group by FILE_NAME, TABLE_NAME)q1 where table2.ID = '123'
 and table2.FILE_NAME = q1.FILE_NAME and table2.TABLE_NAME = q1.TABLE_NAME;
 
-
+--merge
+merge into table table1 using (
+  select col1,
+  col2,
+  col3
+  from
+  table2
+  where col1 = 'smthn' and
+  col2 = 'smthnelse')tab2
+  on table1.ID = tab2.ID
+  when matched then update set
+  table1.col1 = tab2.col1,
+  table1.col2 = tab2.col2,
+  table1.col3 = tab2.col3
+  when not matched then
+  insert(
+    col1,
+    col2,
+    col3
+  )
+  values(
+    tab2.col1,
+    tab2.col2,
+    tab2.col3
+  )
+      
