@@ -6,4 +6,6 @@
   + pig
   + shell/awk utilities
   + pyspark
+  + snowflake
+  + teradata
   
