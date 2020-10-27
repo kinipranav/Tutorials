@@ -79,3 +79,55 @@ merge into table table1 using (
     tab2.col3
   )
       
+--stored proc example
+create or replace procedure schema.sample_proc()
+returns string
+language javascript
+AS
+$$
+
+var length_sql = "select count(1) from schema.table_name";
+var exec_length_stmt = snowflake.createStatement( {sqlText: length_sql } );
+var rs = exec_length_stmt.execute();
+                                           
+if (rs.next())                                           
+  counts = rs.getColumnValue(1);
+    
+var numrows = parseInt(counts);
+
+var sal_sql = "select max(salary) as max_salary from schema.salary";
+var exec_sal_stmt = snowflake.createStatement( {sqlText: sal_sql } );
+rs = execsal_stmt.execute();
+    
+rs.next();
+var salary = rs.getColumnValueAsString('max_salary');
+    
+return "number of rows =" + counts;
+
+$$
+;
+    
+call schema.sample_proc();
+    
+copy into @stage/s3folder/filename from (select * from schema.table limit 2500 offset 0) file_format='csv' overwrite=True;
+
+--return list of files written to s3 stage
+select listagg(distinct metadata$filename, ',') from @stage/s3folder/;
+
+--write dummy file to "new" s3folder 
+copy into @stage/s3folder/new_folder/filename from (select ' ' from dual) file_format='csv' overwrite=True single=True;
+    
+--select chunks of 2500 rows from table at a time
+select * from schema.table limit 2500 offset 0;    --first 2500
+select * from schema.table limit 2500 offset 2500; --next 2500
+select * from schema.table limit 2500 offset 5000; --so on
+    
+--create stage    
+create or replace stage schema.stage_name url='s3://bucket_name/s3folder/'
+    storage_integration = S3_INT
+    file_format = csv;
+
+show storage integrations;
+show users like 'username';
+    
+                                           
